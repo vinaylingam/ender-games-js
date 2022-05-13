@@ -95,10 +95,17 @@ client.on('messageCreate', async message => {
 
 
 	try {
-		command.execute(message, args);
+		await command.execute(message, args);
 	} catch (error) {
-		console.error(error);
-		message.reply('there was an error trying to execute that command!');
+		switch(error.message) {
+			case 'InvalidArguments':
+				if (command.usage) {
+					message.reply(`The proper usage would be: \`${prefix}${command.name} ${command.usage}\``);
+				}
+				break;
+			default:
+				message.reply('there was an error trying to execute that command!');
+		}	
 	}
 });
 
