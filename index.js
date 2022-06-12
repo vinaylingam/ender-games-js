@@ -1,7 +1,20 @@
 // Require the necessary discord.js classes
 const fs = require('node:fs');
 const { Client, Collection, Intents } = require('discord.js');
-const { prefix, token } = require('./test-config.json');
+const { prefix, token, database } = require('./test-config.json');
+const { MongoClient } = require('mongodb');
+
+let clientDb
+let conn;
+try {
+	clientDb = new MongoClient(database.URI); 
+	console.log('Connecting to MongoDB Atlas cluster...');
+	clientDb.connect();
+	conn = clientDb.db(database.DB);
+	console.log('Successfully connected to MongoDB Atlas!');
+} catch (error) {
+	console.error('Connection to MongoDB Atlas failed!', error);
+}
 
 // Create a new client instance
 const client = new Client({ 
@@ -95,8 +108,9 @@ client.on('messageCreate', async message => {
 
 
 	try {
-		await command.execute(message, args);
+		await command.execute(message, conn, args);
 	} catch (error) {
+		console.log(error);
 		switch(error.message) {
 			case 'InvalidArguments':
 				if (command.usage) {

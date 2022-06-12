@@ -1,6 +1,6 @@
 module.exports = {
 	// ...
-	execute(message, args) {
+	execute(message, conn, args) {
 		const data = [];
 		const { commands } = message.client;
 

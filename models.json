@@ -1,0 +1,38 @@
+
+{
+    "member" : 89034809345,
+    "reminders" : {
+        "izzi" : {
+            "vote" : {
+                "enabled" : true,
+                "active" : true, 
+                "sendWhere" : "channel",
+                "channel" : "<channel_id>",
+                "spamMode" : true,
+                "activeHours" : {
+                    "start" : 10,
+                    "end" : 5,
+                    "TZ" : -4 
+                },
+                "beforePing" : 720 
+            },
+            "lottery" : {
+                "status" : true, 
+                "sendWhere" : "channel", 
+                "spamMode" : true 
+            },
+            "raid" : {
+                "status" : true, 
+                "sendWhere" : "channel", 
+                "spamMode" : true 
+            }
+        },
+        "anigame" : {
+            "vote" : {
+                "status" : true, 
+                "sendWhere" : "channel", 
+                "spamMode" : true 
+            }
+        }
+    }
+}
