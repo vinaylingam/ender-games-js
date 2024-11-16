@@ -1,10 +1,12 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+import { SlashCommandBuilder } from '@discordjs/builders';
 
-module.exports = {
-	data: new SlashCommandBuilder()
-		.setName('reminders')
-		.setDescription('Shows reminders panel!'),
-	async execute(interaction) {
-		await interaction.reply('Pong!');
-	},
-};
+
+const data = new SlashCommandBuilder()
+	.setName('reminders')
+	.setDescription('Shows reminders panel!');
+
+const execute = async (interaction) => {
+	await interaction.reply('Pong!');
+}
+
+export { data, execute };
