@@ -1,29 +1,29 @@
-const helper = require('./helper.js');
-const { MessageActionRow, MessageButton } = require('discord.js');
-const rpsDAO = require('./../DAO/rps.js');
+import { helper } from './helper.js';
+import { ActionRowBuilder, ButtonBuilder } from 'discord.js';
+import { rpsDAO } from './../DAO/rps.js';
 
-module.exports = {
+const rps = {
     ANSWER_RPS : {
             rock: "roll_of_paper",
             roll_of_paper: "scissors",
             scissors: "rock"
     },
 
-    row : new MessageActionRow()
+    row : new ActionRowBuilder()
     .addComponents(
-        new MessageButton()
+        new ButtonBuilder()
             .setCustomId('rock')
-            .setStyle('PRIMARY')
+            .setStyle(1)
             .setLabel('Rock')
             .setEmoji('🪨'), // rock emote
-        new MessageButton()
+        new ButtonBuilder()
             .setCustomId('roll_of_paper')
-            .setStyle('PRIMARY')
+            .setStyle(1)
             .setLabel('Paper')
             .setEmoji('🧻'), // paper emote
-        new MessageButton()
+        new ButtonBuilder()
             .setCustomId('scissors')
-            .setStyle('PRIMARY')
+            .setStyle(1)
             .setLabel('Scissors')
             .setEmoji('✂️'), // scissor emote
     ),
@@ -85,3 +85,5 @@ module.exports = {
     }
 
 }
+
+export { rps };

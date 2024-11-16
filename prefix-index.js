@@ -1,54 +1,40 @@
+// Require the necessary discord.js classes
+const fs = require('node:fs');
+const { Client, Collection, Intents } = require('discord.js');
+const { prefix, token, database } = require('./test-config.json');
+const { MongoClient } = require('mongodb');
 
-import fs from 'node:fs';
-import { Client, Collection, GatewayIntentBits, Events } from 'discord.js';
-import config from './test-config.js';
-import { MongoClient, ServerApiVersion } from 'mongodb';
-import { getAnigameDonationChannels, logDonation } from './utils/AnigameDonationsManager.js';
-
-const { prefix, token, database } = config;
-const uri = database.URI;
+let clientDb
 let conn;
-const dbClient = new MongoClient(uri,  {
-	serverApi: {
-		version: ServerApiVersion.v1,
-		strict: false,
-		deprecationErrors: true,
-	}
-	}
-);
-
-async function run() {
-	  // Connect the client to the server (optional starting in v4.7)
-	  await dbClient.connect();
-	  // Send a ping to confirm a successful connection
-	  await dbClient.db(database.DB).command({ ping: 1 });
-	  conn = dbClient.db(database.DB);
-	  console.log("Pinged your deployment. You successfully connected to MongoDB!");
+try {
+	clientDb = new MongoClient(database.URI); 
+	console.log('Connecting to MongoDB Atlas cluster...');
+	clientDb.connect();
+	conn = clientDb.db(database.DB);
+	console.log('Successfully connected to MongoDB Atlas!');
+} catch (error) {
+	console.error('Connection to MongoDB Atlas failed!', error);
 }
-
-await run().catch(console.dir);
-
-let anigameDonationChannels = await getAnigameDonationChannels(conn);
 
 // Create a new client instance
 const client = new Client({ 
 	intents: 
-	[GatewayIntentBits.Guilds,  
-	GatewayIntentBits.GuildMembers,
-	GatewayIntentBits.GuildEmojisAndStickers,
-	GatewayIntentBits.GuildIntegrations,
-	GatewayIntentBits.GuildWebhooks,
-	GatewayIntentBits.GuildInvites,
-	GatewayIntentBits.GuildVoiceStates,
-	GatewayIntentBits.GuildPresences,
-	GatewayIntentBits.GuildMessages,
-	GatewayIntentBits.GuildMessageReactions,
-	GatewayIntentBits.GuildMessageTyping,
-	GatewayIntentBits.DirectMessages,
-	GatewayIntentBits.DirectMessageReactions,
-	GatewayIntentBits.DirectMessageTyping,
-	GatewayIntentBits.MessageContent 
-]});
+	[Intents.FLAGS.GUILDS, 
+	Intents.FLAGS.GUILD_MEMBERS,
+	Intents.FLAGS.GUILD_BANS,
+	Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
+	Intents.FLAGS.GUILD_INTEGRATIONS,
+	Intents.FLAGS.GUILD_WEBHOOKS,
+	Intents.FLAGS.GUILD_INVITES,
+	Intents.FLAGS.GUILD_VOICE_STATES,
+	Intents.FLAGS.GUILD_PRESENCES,
+	Intents.FLAGS.GUILD_MESSAGES,
+	Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+	Intents.FLAGS.GUILD_MESSAGE_TYPING,
+	Intents.FLAGS.DIRECT_MESSAGES,
+	Intents.FLAGS.DIRECT_MESSAGE_REACTIONS,
+	Intents.FLAGS.DIRECT_MESSAGE_TYPING
+] });
 client.commands = new Collection();
 client.cooldowns = new Collection();
 
@@ -58,22 +44,17 @@ const commandFolders = fs.readdirSync('./commands');
 for (const folder of commandFolders) {
 	const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
 	for (const file of commandFiles) {
-		const commandInFile = await import(`./commands/${folder}/${file}`);
+		const commandInFile = require(`./commands/${folder}/${file}`);
 		client.commands.set(commandInFile.name, commandInFile);
 	}
 }
 
 // When the client is ready, run this code (only once)
-client.once(Events.ClientReady, readyClient => {
-	console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+client.once('ready', () => {
+	console.log('Ready!');
 });
 
-client.on(Events.MessageCreate, async message => {
-
-	if (anigameDonationChannels.includes(message.channelId)) {
-		logDonation(message, client, conn);
-	}
-
+client.on('messageCreate', async message => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
