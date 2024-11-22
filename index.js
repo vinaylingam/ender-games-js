@@ -52,14 +52,13 @@ const client = new Client({
 client.commands = new Collection();
 client.cooldowns = new Collection();
 
-
 const commandFolders = fs.readdirSync('./commands');
 
 for (const folder of commandFolders) {
 	const commandFiles = fs.readdirSync(`./commands/${folder}`).filter(file => file.endsWith('.js'));
 	for (const file of commandFiles) {
 		const commandInFile = await import(`./commands/${folder}/${file}`);
-		client.commands.set(commandInFile.name, commandInFile);
+		client.commands.set(commandInFile.name && commandInFile.name.toLowerCase(), commandInFile);
 	}
 }
 
@@ -125,9 +124,8 @@ client.on(Events.MessageCreate, async message => {
 	timestamps.set(message.author.id, now);
 	setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
 
-
 	try {
-		await command.execute(message, conn, args);
+		await command.execute(message, client, conn, args);
 	} catch (error) {
 		console.log(error);
 		switch(error.message) {

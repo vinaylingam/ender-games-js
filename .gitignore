@@ -106,3 +106,7 @@ dist
 # Config File
 config.json
 test-config.json
+
+# .vs
+.vs/
+.vscode/
