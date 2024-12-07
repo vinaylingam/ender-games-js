@@ -8,8 +8,6 @@ const description = 'Add donation logs for a member';
 const usage = 'h.AddDonation @member <amount>';
 const permissions = PermissionFlagsBits.Administrator;
 const execute = async (message, client, conn, args) => {
-	console.log(args);
-	console.log(message.mentions.users);
 
 	const users = message?.mentions?.users;
 	const numbers = GetNumbers(args);
