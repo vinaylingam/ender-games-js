@@ -24,7 +24,7 @@ async function run() {
 	  await dbClient.db(database.DB).command({ ping: 1 });
 	  conn = dbClient.db(database.DB);
 	  console.log("Pinged your deployment. You successfully connected to MongoDB!");
-}
+};
 
 await run().catch(console.dir);
 
@@ -87,12 +87,12 @@ client.on(Events.MessageCreate, async message => {
 
 	if (command.permissions) {
 		const authorPerms = message.channel.permissionsFor(message.author);
-		if (!authorPerms || !authorPerms.has(command.permissions)) {
+		if (!authorPerms || !(authorPerms.has(command.permissions))) {
 			return message.reply('You can not do this!');
 		}
 	}
 
-	if (command.args && !args.length) {
+	if (command.haveArgs && !args.length) {
 		let reply = `You didn't provide any arguments, ${message.author}!`;
 
 		if (command.usage) {
