@@ -9,5 +9,14 @@ const formatAmount = (amount) => {
 	return new Intl.NumberFormat('en-US').format(amount);
 };
 
+const getNumbers = (args) => {
+	const nums = [];
+	args.forEach(x => {
+		if (!isNaN(parseInt(x))) {
+			nums.push(x);
+		}
+	});
+	return nums;
+};
 
-export { getUserId, formatAmount };
+export { getUserId, formatAmount, getNumbers };
