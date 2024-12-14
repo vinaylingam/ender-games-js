@@ -1,9 +1,9 @@
 import { getDonations } from '../../DAO/AnigameDonationsDAO.js';
 import { buildDonationsViewEmbed, isPartOfAnyClan } from '../../utils/AnigameDonationsManager.js';
 
-const name = 'viewAnigameDonations';
+const name = 'Donations';
 const description = 'view members and remaining donation amount after the weekly deduction';
-const aliases = ['viewanigamedonation'];
+const aliases = ['donations'];
 const execute = async (message, client, conn, args) => {
 	const commandBy = message.author.id;
 

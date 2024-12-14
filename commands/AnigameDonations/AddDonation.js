@@ -2,6 +2,7 @@ import { logDonationInDb } from '../../utils/AnigameDonationsManager.js';
 import { getAnigameDonationChannelByServer } from '../../DAO/AnigameDonationsDAO.js';
 import { DonationTypes } from '../../utils/constants.js';
 import { PermissionFlagsBits } from 'discord.js';
+import { getNumbers } from '../../utils/helper.js';
 
 const name = 'AddDonation';
 const description = 'Add donation logs for a member';
@@ -10,7 +11,7 @@ const permissions = PermissionFlagsBits.Administrator;
 const execute = async (message, client, conn, args) => {
 
 	const users = message?.mentions?.users;
-	const numbers = GetNumbers(args);
+	const numbers = getNumbers(args);
 
 	if (users.size != 1 || numbers.length != 1) {
 		message.reply('The proper usage would be: **h.adddonation <@user> <amount>**');
@@ -28,16 +29,6 @@ const execute = async (message, client, conn, args) => {
 	catch (ex) {
 		message.reply('Error while adding donation.', ex.message);
 	}
-};
-
-const GetNumbers = (args) => {
-	const nums = [];
-	args.forEach(x => {
-		if (parseInt(x)) {
-			nums.push(x);
-		}
-	});
-	return nums;
 };
 
 export { name, description, usage, permissions, execute };

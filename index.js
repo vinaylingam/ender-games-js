@@ -3,7 +3,8 @@ import fs from 'node:fs';
 import { Client, Collection, GatewayIntentBits, Events } from 'discord.js';
 import config from './config.js';
 import { MongoClient, ServerApiVersion } from 'mongodb';
-import { getAnigameDonationChannels, logDonation } from './utils/AnigameDonationsManager.js';
+import { logDonation } from './utils/AnigameDonationsManager.js';
+import {getAnigameDonationChannels } from './DAO/AnigameDonationsDAO.js';
 
 const { prefix, token, database } = config;
 const uri = database.URI;
