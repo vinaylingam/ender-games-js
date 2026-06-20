@@ -35,21 +35,21 @@ const anigameDonationChannels = await getAnigameDonationChannels(conn);
 const client = new Client({
 	intents:
 		[GatewayIntentBits.Guilds,
-		GatewayIntentBits.GuildMembers,
-		GatewayIntentBits.GuildEmojisAndStickers,
-		GatewayIntentBits.GuildIntegrations,
-		GatewayIntentBits.GuildWebhooks,
-		GatewayIntentBits.GuildInvites,
-		GatewayIntentBits.GuildVoiceStates,
-		GatewayIntentBits.GuildPresences,
-		GatewayIntentBits.GuildMessages,
-		GatewayIntentBits.GuildMessageReactions,
-		GatewayIntentBits.GuildMessageTyping,
-		GatewayIntentBits.DirectMessages,
-		GatewayIntentBits.DirectMessageReactions,
-		GatewayIntentBits.DirectMessageTyping,
-		GatewayIntentBits.MessageContent,
-		]
+			GatewayIntentBits.GuildMembers,
+			GatewayIntentBits.GuildEmojisAndStickers,
+			GatewayIntentBits.GuildIntegrations,
+			GatewayIntentBits.GuildWebhooks,
+			GatewayIntentBits.GuildInvites,
+			GatewayIntentBits.GuildVoiceStates,
+			GatewayIntentBits.GuildPresences,
+			GatewayIntentBits.GuildMessages,
+			GatewayIntentBits.GuildMessageReactions,
+			GatewayIntentBits.GuildMessageTyping,
+			GatewayIntentBits.DirectMessages,
+			GatewayIntentBits.DirectMessageReactions,
+			GatewayIntentBits.DirectMessageTyping,
+			GatewayIntentBits.MessageContent,
+		],
 });
 client.commands = new Collection();
 client.cooldowns = new Collection();
@@ -132,13 +132,13 @@ client.on(Events.MessageCreate, async message => {
 	catch (error) {
 		console.log(error);
 		switch (error.message) {
-			case 'InvalidArguments':
-				if (command.usage) {
-					message.reply(`The proper usage would be: \`${prefix}${command.name} ${command.usage}\``);
-				}
-				break;
-			default:
-				message.reply('there was an error trying to execute that command!');
+		case 'InvalidArguments':
+			if (command.usage) {
+				message.reply(`The proper usage would be: \`${prefix}${command.name} ${command.usage}\``);
+			}
+			break;
+		default:
+			message.reply('there was an error trying to execute that command!');
 		}
 	}
 });
