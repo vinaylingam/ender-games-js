@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import { Client, Collection, GatewayIntentBits, Events } from 'discord.js';
-import config from './test-config.js';
+import config from './config.js';
 import { MongoClient, ServerApiVersion } from 'mongodb';
 import { logDonation } from './utils/AnigameDonationsManager.js';
 import { getAnigameDonationChannels } from './DAO/AnigameDonationsDAO.js';
@@ -18,12 +18,12 @@ const dbClient = new MongoClient(uri, {
 );
 
 async function run() {
-	  // Connect the client to the server (optional starting in v4.7)
-	  await dbClient.connect();
-	  // Send a ping to confirm a successful connection
-	  await dbClient.db(database.DB).command({ ping: 1 });
-	  conn = dbClient.db(database.DB);
-	  console.log('Pinged your deployment. You successfully connected to MongoDB!');
+	// Connect the client to the server (optional starting in v4.7)
+	await dbClient.connect();
+	// Send a ping to confirm a successful connection
+	await dbClient.db(database.DB).command({ ping: 1 });
+	conn = dbClient.db(database.DB);
+	console.log('Pinged your deployment. You successfully connected to MongoDB!');
 };
 
 await run().catch(console.dir);
@@ -33,7 +33,7 @@ const anigameDonationChannels = await getAnigameDonationChannels(conn);
 // Create a new client instance
 const client = new Client({
 	intents:
-	[GatewayIntentBits.Guilds,
+		[GatewayIntentBits.Guilds,
 		GatewayIntentBits.GuildMembers,
 		GatewayIntentBits.GuildEmojisAndStickers,
 		GatewayIntentBits.GuildIntegrations,
@@ -48,7 +48,8 @@ const client = new Client({
 		GatewayIntentBits.DirectMessageReactions,
 		GatewayIntentBits.DirectMessageTyping,
 		GatewayIntentBits.MessageContent,
-	] });
+		]
+});
 client.commands = new Collection();
 client.cooldowns = new Collection();
 
@@ -130,13 +131,13 @@ client.on(Events.MessageCreate, async message => {
 	catch (error) {
 		console.log(error);
 		switch (error.message) {
-		case 'InvalidArguments':
-			if (command.usage) {
-				message.reply(`The proper usage would be: \`${prefix}${command.name} ${command.usage}\``);
-			}
-			break;
-		default:
-			message.reply('there was an error trying to execute that command!');
+			case 'InvalidArguments':
+				if (command.usage) {
+					message.reply(`The proper usage would be: \`${prefix}${command.name} ${command.usage}\``);
+				}
+				break;
+			default:
+				message.reply('there was an error trying to execute that command!');
 		}
 	}
 });
