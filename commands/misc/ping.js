@@ -1,6 +1,6 @@
 const name = 'ping';
 const description = 'Ping!';
-const execute = (message, client, conn, args) => {
+const execute = (message, _client, _conn, _args) => {
 	message.channel.send('Pong.');
 };
 

@@ -20,14 +20,15 @@
   },
   "homepage": "https://github.com/vinaylingam/ender-games-js#readme",
   "dependencies": {
-    "@discordjs/builders": "^1.9.0",
-    "@discordjs/rest": "^2.4.0",
-    "discord-api-types": "^0.37.102",
-    "discord.js": "^14.16.3",
-    "dotenv": "^16.4.5",
-    "mongodb": "^6.10.0"
+    "@discordjs/builders": "^1.14.1",
+    "@discordjs/rest": "^2.6.1",
+    "discord-api-types": "^0.38.49",
+    "discord.js": "^14.26.4",
+    "mongodb": "^7.3.0"
   },
   "devDependencies": {
-    "eslint": "^8.57.1"
+    "@eslint/js": "^9.39.4",
+    "eslint": "^9.39.4",
+    "globals": "^16.2.0"
   }
 }
