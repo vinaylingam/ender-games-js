@@ -40,12 +40,12 @@ const rpsDAO = {
 
 	},
 
-	async updateWinner(conn, winner, looser) {
+	async updateWinner(conn, winner, loser) {
 		const rpsCol = conn.collection('rps');
-		const query = { player : winner, 'opponent.id' : looser };
+		const query = { player : winner, 'opponent.id' : loser };
 		const update = { $inc : { 'opponent.$.score' : 1 } };
 
-		rpsCol.updateOne(query, update, { upsert : true });
+		await rpsCol.updateOne(query, update, { upsert : true });
 	},
 };
 

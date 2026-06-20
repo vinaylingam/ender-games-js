@@ -27,7 +27,7 @@ const logDonation = async (message, client, conn) => {
 				user.forEach(x => {
 					userId = x.id;
 				});
-				await logDonationInDb(conn, message.guildId, message.channelId, message.Id, 'server', userId, goldDonated, DonationTypes.Self);
+				await logDonationInDb(conn, message.guildId, message.channelId, message.id, 'server', userId, goldDonated, DonationTypes.Self);
 			}
 			channel.send(`**${summonerName}** has donated **${goldDonatedRaw}** gold`);
 		}

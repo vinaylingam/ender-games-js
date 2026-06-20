@@ -67,13 +67,13 @@ const rps = {
 			player2Message += tieMessage;
 		}
 		else if (secondChoice == winningResponse) {
-			p2M = player2Message.substr(0, player2Message.length - 1);
+			p2M = player2Message.slice(0, -1);
 			player2Message = p2M + winText;
 			await rpsDAO.updateWinner(conn, player2.id, player1.id);
 			p2Score += 1;
 		}
 		else {
-			p1M = player1Message.substr(0, player1Message.length - 1);
+			p1M = player1Message.slice(0, -1);
 			player1Message = p1M + winText;
 			await rpsDAO.updateWinner(conn, player1.id, player2.id);
 			p1Score += 1;
