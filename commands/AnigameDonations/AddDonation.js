@@ -2,7 +2,7 @@ import { logDonationInDb } from '../../utils/AnigameDonationsManager.js';
 import { getAnigameDonationChannelByServer } from '../../DAO/AnigameDonationsDAO.js';
 import { DonationTypes } from '../../utils/constants.js';
 import { PermissionFlagsBits } from 'discord.js';
-import { getNumbers } from '../../utils/helper.js';
+import { getNumbers, validateAmount, validateGuildMember } from '../../utils/helper.js';
 
 const name = 'AddDonation';
 const description = 'Add donation logs for a member';
@@ -18,12 +18,24 @@ const execute = async (message, client, conn, args) => {
 		return;
 	}
 
-	const channelId = await getAnigameDonationChannelByServer(conn, message.guildId);
+	const amountValidation = validateAmount(numbers[0]);
+	if (!amountValidation.valid) {
+		message.reply(`The donation amount ${amountValidation.error}`);
+		return;
+	}
+	const amount = amountValidation.amount;
 
 	const [firstKey, firstValue] = users.entries().next().value;
+	const memberValidation = await validateGuildMember(message.guild, firstKey);
+	if (!memberValidation.valid) {
+		message.reply(memberValidation.error);
+		return;
+	}
+
+	const channelId = await getAnigameDonationChannelByServer(conn, message.guildId);
 
 	try {
-		await logDonationInDb(conn, message.guildId, channelId, message.id, 'server', firstKey, numbers[0], DonationTypes.Admin);
+		await logDonationInDb(conn, message.guildId, channelId, message.id, 'server', firstKey, amount, DonationTypes.Admin);
 		message.reply(`Donation for ${firstValue.displayName} successfully added`);
 	}
 	catch (ex) {

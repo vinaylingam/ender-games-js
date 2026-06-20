@@ -1,5 +1,5 @@
 import { PermissionFlagsBits } from 'discord.js';
-import { getNumbers } from '../../utils/helper.js';
+import { getNumbers, validateAmount } from '../../utils/helper.js';
 import { resetWeeklyDonation } from '../../utils/AnigameDonationsManager.js';
 
 const name = 'ResetWeekly';
@@ -14,7 +14,14 @@ const execute = async (message, client, conn, args) => {
 		return;
 	}
 
-	await resetWeeklyDonation(conn, 'server', message, numbers[0]);
+	const amountValidation = validateAmount(numbers[0]);
+	if (!amountValidation.valid) {
+		message.reply(`The weekly requirement reset amount ${amountValidation.error}`);
+		return;
+	}
+	const amount = amountValidation.amount;
+
+	await resetWeeklyDonation(conn, 'server', message, amount);
 	message.reply('Successfully reset this weeks donation');
 };
 
