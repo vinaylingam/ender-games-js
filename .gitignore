@@ -106,6 +106,8 @@ dist
 # Config File
 config.json
 test-config.json
+config.js
+test-config.js
 
 # .vs
 .vs/

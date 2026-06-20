@@ -1,21 +1,20 @@
-
 import fs from 'node:fs';
 import { Client, Collection, GatewayIntentBits, Events } from 'discord.js';
-import config from './config.js';
+import config from './test-config.js';
 import { MongoClient, ServerApiVersion } from 'mongodb';
 import { logDonation } from './utils/AnigameDonationsManager.js';
-import {getAnigameDonationChannels } from './DAO/AnigameDonationsDAO.js';
+import { getAnigameDonationChannels } from './DAO/AnigameDonationsDAO.js';
 
 const { prefix, token, database } = config;
 const uri = database.URI;
 let conn;
-const dbClient = new MongoClient(uri,  {
+const dbClient = new MongoClient(uri, {
 	serverApi: {
 		version: ServerApiVersion.v1,
 		strict: false,
 		deprecationErrors: true,
-	}
-	}
+	},
+},
 );
 
 async function run() {
@@ -24,32 +23,32 @@ async function run() {
 	  // Send a ping to confirm a successful connection
 	  await dbClient.db(database.DB).command({ ping: 1 });
 	  conn = dbClient.db(database.DB);
-	  console.log("Pinged your deployment. You successfully connected to MongoDB!");
+	  console.log('Pinged your deployment. You successfully connected to MongoDB!');
 };
 
 await run().catch(console.dir);
 
-let anigameDonationChannels = await getAnigameDonationChannels(conn);
+const anigameDonationChannels = await getAnigameDonationChannels(conn);
 
 // Create a new client instance
-const client = new Client({ 
-	intents: 
-	[GatewayIntentBits.Guilds,  
-	GatewayIntentBits.GuildMembers,
-	GatewayIntentBits.GuildEmojisAndStickers,
-	GatewayIntentBits.GuildIntegrations,
-	GatewayIntentBits.GuildWebhooks,
-	GatewayIntentBits.GuildInvites,
-	GatewayIntentBits.GuildVoiceStates,
-	GatewayIntentBits.GuildPresences,
-	GatewayIntentBits.GuildMessages,
-	GatewayIntentBits.GuildMessageReactions,
-	GatewayIntentBits.GuildMessageTyping,
-	GatewayIntentBits.DirectMessages,
-	GatewayIntentBits.DirectMessageReactions,
-	GatewayIntentBits.DirectMessageTyping,
-	GatewayIntentBits.MessageContent 
-]});
+const client = new Client({
+	intents:
+	[GatewayIntentBits.Guilds,
+		GatewayIntentBits.GuildMembers,
+		GatewayIntentBits.GuildEmojisAndStickers,
+		GatewayIntentBits.GuildIntegrations,
+		GatewayIntentBits.GuildWebhooks,
+		GatewayIntentBits.GuildInvites,
+		GatewayIntentBits.GuildVoiceStates,
+		GatewayIntentBits.GuildPresences,
+		GatewayIntentBits.GuildMessages,
+		GatewayIntentBits.GuildMessageReactions,
+		GatewayIntentBits.GuildMessageTyping,
+		GatewayIntentBits.DirectMessages,
+		GatewayIntentBits.DirectMessageReactions,
+		GatewayIntentBits.DirectMessageTyping,
+		GatewayIntentBits.MessageContent,
+	] });
 client.commands = new Collection();
 client.cooldowns = new Collection();
 
@@ -77,7 +76,7 @@ client.on(Events.MessageCreate, async message => {
 	if (!message.content.startsWith(prefix) || message.author.bot) return;
 
 	const args = message.content.slice(prefix.length).trim().split(/ +/);
-	var command = args.shift().toLowerCase();
+	let command = args.shift().toLowerCase();
 
 	if (!client.commands.has(command)) return;
 	command = client.commands.get(command);
@@ -99,7 +98,7 @@ client.on(Events.MessageCreate, async message => {
 		if (command.usage) {
 			reply += `\nThe proper usage would be: \`${prefix}${command.name} ${command.usage}\``;
 		}
-	
+
 		return message.channel.send(reply);
 	}
 
@@ -127,17 +126,18 @@ client.on(Events.MessageCreate, async message => {
 
 	try {
 		await command.execute(message, client, conn, args);
-	} catch (error) {
+	}
+	catch (error) {
 		console.log(error);
-		switch(error.message) {
-			case 'InvalidArguments':
-				if (command.usage) {
-					message.reply(`The proper usage would be: \`${prefix}${command.name} ${command.usage}\``);
-				}
-				break;
-			default:
-				message.reply('there was an error trying to execute that command!');
-		}	
+		switch (error.message) {
+		case 'InvalidArguments':
+			if (command.usage) {
+				message.reply(`The proper usage would be: \`${prefix}${command.name} ${command.usage}\``);
+			}
+			break;
+		default:
+			message.reply('there was an error trying to execute that command!');
+		}
 	}
 });
 

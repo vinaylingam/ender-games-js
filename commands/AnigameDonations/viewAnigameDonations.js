@@ -4,7 +4,7 @@ import { buildDonationsViewEmbed, isPartOfAnyClan } from '../../utils/AnigameDon
 const name = 'Donations';
 const description = 'view members and remaining donation amount after the weekly deduction';
 const aliases = ['donations'];
-const execute = async (message, client, conn, args) => {
+const execute = async (message, client, conn, _args) => {
 	const commandBy = message.author.id;
 
 	const isPart = await isPartOfAnyClan(conn, commandBy);

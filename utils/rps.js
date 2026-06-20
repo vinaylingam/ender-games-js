@@ -1,5 +1,5 @@
 import { getUserId } from './helper.js';
-import { ActionRowBuilder, ButtonBuilder } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from 'discord.js';
 import { rpsDAO } from './../DAO/rps.js';
 
 const rps = {
@@ -13,17 +13,17 @@ const rps = {
 		.addComponents(
 			new ButtonBuilder()
 				.setCustomId('rock')
-				.setStyle(1)
+				.setStyle(ButtonStyle.Primary)
 				.setLabel('Rock')
 				.setEmoji('🪨'), // rock emote
 			new ButtonBuilder()
 				.setCustomId('roll_of_paper')
-				.setStyle(1)
+				.setStyle(ButtonStyle.Primary)
 				.setLabel('Paper')
 				.setEmoji('🧻'), // paper emote
 			new ButtonBuilder()
 				.setCustomId('scissors')
-				.setStyle(1)
+				.setStyle(ButtonStyle.Primary)
 				.setLabel('Scissors')
 				.setEmoji('✂️'), // scissor emote
 		),
@@ -59,6 +59,8 @@ const rps = {
 		let player1Message = this.playerMessages(player1, 3, firstChoice);
 		let player2Message = this.playerMessages(player2, 3, secondChoice);
 		const winText = ' and WON..!!! :tada:\n';
+		let p2M = '';
+		let p1M = '';
 
 		if (firstChoice == secondChoice) {
 			const tieMessage = 'Look at y\'all! You\'re like twinsies!\n';

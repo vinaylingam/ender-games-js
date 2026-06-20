@@ -1,4 +1,5 @@
 import { rps } from './../../utils/rps.js';
+import { ComponentType } from 'discord.js';
 
 const name = 'rps';
 const description = 'Rock Paper Scissors';
@@ -7,11 +8,20 @@ const haveArgs = true;
 const guildOnly = true;
 const cooldown = 5;
 
-const execute = async (message, conn, args) => {
+const execute = async (message, client, conn, _args) => {
 
 	const player1id = message.author.id;
 	const player1 = await message.guild.members.fetch(player1id);
-	const player2id = rps.getUserId(args[0]);
+
+	const users = message?.mentions?.users;
+
+	if (users.size != 1) {
+		message.reply('The proper usage is : **h.rps <@user>**');
+		return;
+	}
+
+	const [player2id] = users.entries().next().value;
+
 	const player2 = await message.guild.members.fetch(player2id);
 	let matchFinished = false;
 
@@ -35,37 +45,40 @@ const execute = async (message, conn, args) => {
 		components: [rps.row],
 	});
 
-	const collector = sentMessage.createMessageComponentCollector({ componentType: 'BUTTON', time: 20000 });
+	const collector = sentMessage.createMessageComponentCollector({ componentType: ComponentType.Button, time: 20000 });
 
-	collector.on('collect', choose => {
-		choose.deferUpdate();
-		if (choose.user.id == player1id) {
-			player1Choice = !player1Choice ? choose.customId : player1Choice;
-			player1Message = rps.playerMessages(player1, 2);
-		}
-		else if (choose.user.id == player2id) {
-			player2Choice = !player2Choice ? choose.customId : player2Choice;
-			player2Message = rps.playerMessages(player2, 2);
-		}
+	try {
+		collector.on('collect', choose => {
+			if (choose.user.id == player1id) {
+				player1Choice = !player1Choice ? choose.customId : player1Choice;
+				player1Message = rps.playerMessages(player1, 2);
+			}
+			else if (choose.user.id == player2id) {
+				player2Choice = !player2Choice ? choose.customId : player2Choice;
+				player2Message = rps.playerMessages(player2, 2);
+			}
 
-		sentMessage.edit({
-			content: vs + scoresMsg + player1Message + player2Message,
-			components: [rps.row],
-		});
-
-		if (player1Choice && player2Choice && !matchFinished) {
-			matchFinished = true;
-			rps.declareWinner(conn, player1Choice, player2Choice, sentMessage, player1, player2, vs, player1score, player2score);
-		}
-	});
-
-	collector.on('end', () => {
-		if (!player1Choice || !player2Choice) {
 			sentMessage.edit({
-				content: vs + scoresMsg + 'guess, no one wants to play..!!',
+				content: vs + scoresMsg + player1Message + player2Message,
+				components: [rps.row],
 			});
-		}
-	});
+
+			if (player1Choice && player2Choice && !matchFinished) {
+				matchFinished = true;
+				rps.declareWinner(conn, player1Choice, player2Choice, sentMessage, player1, player2, vs, player1score, player2score);
+			}
+		});
+		collector.on('end', () => {
+			if (!player1Choice || !player2Choice) {
+				sentMessage.edit({
+					content: vs + scoresMsg + 'guess, no one wants to play..!!',
+				});
+			}
+		});
+	}
+	catch {
+		// do nothing
+	}
 };
 
 export { name, description, usage, haveArgs, guildOnly, cooldown, execute };

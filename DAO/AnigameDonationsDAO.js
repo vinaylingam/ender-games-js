@@ -20,32 +20,32 @@ const getDonations = async (conn, serverId) => {
 const getAnigameDonationChannelByServer = async (conn, serverId) => {
 	let channel = '';
 	const collection = conn.collection('server');
-	const servers = collection.find();
-	await servers.forEach(x => {
+	const servers = await collection.find().toArray();
+	for (const x of servers) {
 		if (x != null && x['AnigameDonations'] != null && x['ServerId'] == serverId) {
 			if (channel == '') {
 				const anigameDonations = x['AnigameDonations'];
-				anigameDonations.forEach(y => {
+				for (const y of anigameDonations) {
 					channel = y['Channel'];
-				});
+				}
 			}
 		}
-	});
+	}
 	return channel;
 };
 
 const getAnigameDonationChannels = async (conn) => {
 	const channelIds = [];
 	const collection = conn.collection('server');
-	const servers = collection.find();
-	await servers.forEach(x => {
+	const servers = await collection.find().toArray();
+	for (const x of servers) {
 		if (x != null && x['AnigameDonations'] != null) {
 			const anigameDonations = x['AnigameDonations'];
-			anigameDonations.forEach(y => {
+			for (const y of anigameDonations) {
 				channelIds.push(String(y['Channel']));
-			});
+			}
 		}
-	});
+	}
 	return channelIds;
 };
 
