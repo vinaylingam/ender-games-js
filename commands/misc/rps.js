@@ -48,7 +48,14 @@ const execute = async (message, client, conn, _args) => {
 	const collector = sentMessage.createMessageComponentCollector({ componentType: ComponentType.Button, time: 20000 });
 
 	try {
-		collector.on('collect', choose => {
+		collector.on('collect', async choose => {
+			if (choose.user.id !== player1id && choose.user.id !== player2id) {
+				await choose.reply({ content: 'You are not part of this game!', ephemeral: true });
+				return;
+			}
+
+			await choose.deferUpdate();
+
 			if (choose.user.id == player1id) {
 				player1Choice = !player1Choice ? choose.customId : player1Choice;
 				player1Message = rps.playerMessages(player1, 2);

@@ -27,7 +27,20 @@ async function run() {
 	console.log('Pinged your deployment. You successfully connected to MongoDB!');
 };
 
-await run().catch(console.dir);
+process.on('unhandledRejection', (error) => {
+	console.error('Unhandled promise rejection:', error);
+});
+process.on('uncaughtException', (error) => {
+	console.error('Uncaught exception:', error);
+});
+
+try {
+	await run();
+}
+catch (error) {
+	console.error('Failed to connect to MongoDB on startup:', error);
+	process.exit(1);
+}
 
 const anigameDonationChannels = await getAnigameDonationChannels(conn);
 
@@ -145,3 +158,20 @@ client.on(Events.MessageCreate, async message => {
 
 // Login to Discord with your client's token
 client.login(token);
+
+// Graceful shutdown
+const gracefulShutdown = async (signal) => {
+	console.log(`Received ${signal}. Shutting down gracefully...`);
+	try {
+		await dbClient.close();
+		console.log('MongoDB connection closed.');
+	}
+	catch (err) {
+		console.error('Error closing MongoDB connection:', err);
+	}
+	client.destroy();
+	process.exit(0);
+};
+
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
