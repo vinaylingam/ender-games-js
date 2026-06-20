@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import fs from 'node:fs';
 import { Client, Collection, GatewayIntentBits, Events } from 'discord.js';
 import config from './config.js';
