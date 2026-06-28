@@ -1,5 +1,5 @@
 import { EmbedBuilder } from 'discord.js';
-import { findMemberInDonations, resetWeeklyDonation as resetweeklydonationDAO, getAnigameDonationChannelByServer } from '../DAO/AnigameDonationsDAO.js';
+import { findMemberInDonations, resetWeeklyDonation as resetweeklydonationDAO, getAnigameDonationChannelByServer, removeMemberFromDonations, getDonations } from '../DAO/AnigameDonationsDAO.js';
 import { formatAmount } from './helper.js';
 import { DonationTypes } from './constants.js';
 
@@ -168,4 +168,36 @@ const resetWeeklyDonation = async (conn, collectionName, message, reduceAmount) 
 	await resetweeklydonationDAO(conn, collectionName, message.guildId, channelId, reduceAmount, newLog);
 };
 
-export { logDonation, logDonationInDb, isPartOfAnyClan, buildDonationsViewEmbed, viewTemplateForDonationsOrDues, resetWeeklyDonation };
+const removeMemberDonationRecord = async (conn, serverId, memberId, removedBy) => {
+	const channelId = await getAnigameDonationChannelByServer(conn, serverId);
+	if (!channelId) {
+		throw new Error('No tracked donation channel found for this server.');
+	}
+
+	const donations = await getDonations(conn, serverId);
+	if (!donations || !donations.AnigameDonations) {
+		throw new Error('No donations data found for this server.');
+	}
+
+	const donationChannel = donations.AnigameDonations.find(d => d.Channel === channelId);
+	if (!donationChannel || !donationChannel.Members) {
+		throw new Error('No donation records found for this channel.');
+	}
+
+	const member = donationChannel.Members.find(m => m.Id === memberId);
+	if (!member) {
+		return null; // Member not in the donations list
+	}
+
+	const removalRecord = {
+		Id: memberId,
+		amount: member.amount,
+		RemovedAt: new Date().toISOString(),
+		RemovedBy: removedBy,
+	};
+
+	await removeMemberFromDonations(conn, 'server', serverId, channelId, memberId, removalRecord);
+	return member.amount;
+};
+
+export { logDonation, logDonationInDb, isPartOfAnyClan, buildDonationsViewEmbed, viewTemplateForDonationsOrDues, resetWeeklyDonation, removeMemberDonationRecord };

@@ -75,4 +75,24 @@ const resetWeeklyDonation = async (conn, collectionName, serverId, channelId, re
 	await collection.updateOne(filter, update, options);
 };
 
-export { findMemberInDonations, getDonations, getAnigameDonationChannelByServer, getAnigameDonationChannels, resetWeeklyDonation };
+const removeMemberFromDonations = async (conn, collectionName, serverId, channelId, memberId, removalRecord) => {
+	const collection = conn.collection(collectionName);
+
+	const filter = {
+		'ServerId': serverId,
+		'AnigameDonations.Channel': channelId,
+	};
+
+	const update = {
+		$pull: {
+			'AnigameDonations.$.Members': { Id: memberId },
+		},
+		$push: {
+			'AnigameDonations.$.RemovedMembers': removalRecord,
+		},
+	};
+
+	return await collection.updateOne(filter, update);
+};
+
+export { findMemberInDonations, getDonations, getAnigameDonationChannelByServer, getAnigameDonationChannels, resetWeeklyDonation, removeMemberFromDonations };
